@@ -1,0 +1,78 @@
+* {
+  box-sizing: border-box;
+  margin: 1px;
+}
+
+@font-face {
+  font-family: "ABCDiatypeMono";
+  src: url("fonts/ABCDiatypeMonoEdu-Regular.woff") format("woff"),
+       url("fonts/ABCDiatypeMonoEdu-Regular.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  margin: 1px;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  font-family: "ABCDiatypeMono", monospace;
+  color: white;
+  background: white;
+}
+
+
+
+.Landingpage-gif {
+  position: static;
+  width: 30vw;
+  object-fit: cover;
+  display: block;
+  z-index: 0;
+}
+
+.landing {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.landing-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: black;
+  text-transform: uppercase;
+}
+
+.landing-link h1 {
+  font-size: 100px;
+  font-family: "ABCDiatypeMono", monospace;
+  font-weight: 100;
+  margin: 0;
+}
+
+.arrow-shift {
+  display: inline-block;
+  animation: arrow-shift 1.6s ease-in-out infinite alternate;
+}
+
+
+
+.arrow-shift:last-child {
+  animation-direction: alternate-reverse;
+}
+
+@keyframes arrow-shift {
+  from {
+    transform: translateX(-6px);
+  }
+  to {
+    transform: translateX(6px);
+  }
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EXP Tool-3</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+  <link rel="stylesheet" href="style3.css">
+</head>
+<body>
+
+<div id="layout">
+
+
+  <div id="canvas-container">
+    <button id="resetButton" class="icon-button icon-button--top-right" aria-label="Canvas zurücksetzen">
+      <img src="assets/TT-Buttons-close-2.svg" alt="">
+    </button>
+
+    <div id="bottom-bar" aria-label="Druckleiste">
+      <button id="backButton" class="icon-button" aria-label="Zurück zu Stufe 1">
+        <img src="assets/TT-Buttons-plus-2.svg" alt="">
+      </button>
+
+    <div id="preset-bar" aria-label="Druckvoreinstellungen">
+      <button class="preset-button" data-nozzle-count="40" data-nozzle-spacing="2" data-jitter-strength="0.4" aria-label="Can">
+        <img src="assets/TT-Can.png" alt="Can">
+      </button>
+      <button class="preset-button" data-nozzle-count="55" data-nozzle-spacing="3" data-jitter-strength="0.55" aria-label="Cardboard">
+        <img src="assets/TT-Cardboard.png" alt="Cardboard">
+      </button>
+      <button class="preset-button" data-nozzle-count="75" data-nozzle-spacing="2" data-jitter-strength="0.8" aria-label="Fabric">
+        <img src="assets/TT-Fabric.png" alt="Fabric">
+      </button>
+      <button class="preset-button" data-nozzle-count="95" data-nozzle-spacing="4" data-jitter-strength="0.3" aria-label="Stone">
+        <img src="assets/TT-Stone.png" alt="Stone">
+      </button>
+      <button class="preset-button" data-nozzle-count="30" data-nozzle-spacing="1.5" data-jitter-strength="0.2" aria-label="Wood">
+        <img src="assets/TT-Wood.png" alt="Wood">
+      </button>
+    </div>
+
+      <button id="exportButton" class="icon-button" aria-label="Als PNG speichern">
+        <img src="assets/TT-Buttons-download-2.svg" alt="">
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script src="script2.js"></script>
+</body>
+</html>
