@@ -107,6 +107,41 @@ a {
   gap: 8px;
 }
 
+.image-row {
+  align-items: stretch;
+  padding-right: 0;
+  gap: 8px;
+}
+
+.image-row .control-label {
+  display: flex;
+  align-items: center;
+}
+
+.image-row .select-control,
+.image-row .select-trigger,
+.image-row .font-select {
+  height: 100%;
+}
+
+.image-row .select-control {
+  height: 100%;
+  width: 19.5vw;
+  flex: 0 0 19.5vw;
+  margin-right: calc(-1 * var(--controls-padding));
+}
+
+.image-row .select-trigger {
+  height: 100%;
+  width: 19.5vw;
+  padding: 0;
+}
+
+.image-row .font-select {
+  height: 100%;
+}
+
+
 .export-row {
   height: auto;
   flex: 1 1 auto;

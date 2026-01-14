@@ -2,11 +2,16 @@
 let inputText, squeezeSlider, sizeSlider, weightSlider;
 let outlineMode = false;
 let highlightMode = false;
+let previewImage = null;
+let uploadedImageData = null;
+let isImagePreviewActive = false;
+let pendingImageAdvance = false;
 
 // --- Controls ---
 let toggleOutlineButton, toggleHighlightButton, toggleNoneButton;
 let fontSelect, colorSlider;
 let exportButton;
+let imageUploadInput;
 
 let currentFont = "Arial";
 const DEFAULT_TEXT = "...";
@@ -156,6 +161,19 @@ function setup() {
 
   addLabeledControl("Style", styleGroup, "style-row");
 
+  // Image upload
+  const imageControl = createDiv();
+  imageControl.addClass("select-control");
+  const imageButton = createButton("Select");
+  imageButton.addClass("select-trigger");
+  imageButton.parent(imageControl);
+
+  imageUploadInput = createFileInput(handleImageUpload);
+  imageUploadInput.addClass("font-select");
+  imageUploadInput.attribute("accept", "image/*");
+  imageUploadInput.parent(imageControl);
+  addLabeledControl("Image", imageControl, "image-row");
+
   // Export
   exportButton = createButton("-> send to printer <-");
   const exportRow = createDiv();
@@ -168,6 +186,18 @@ function setup() {
 
 function draw() {
   clear();
+
+  if (isImagePreviewActive && previewImage) {
+    drawImagePreview();
+    if (pendingImageAdvance) {
+      pendingImageAdvance = false;
+      setTimeout(() => {
+        sessionStorage.setItem("stufe1PNG", uploadedImageData);
+        window.location.href = "page3.html";
+      }, 150);
+    }
+    return;
+  }
 
   // Werte aus UI holen
   let txt = inputText.value();
@@ -227,6 +257,29 @@ function draw() {
 
   // === Unterstreichung ===
   pop();
+}
+
+function handleImageUpload(file) {
+  if (!file || file.type !== "image") return;
+  uploadedImageData = file.data;
+  loadImage(file.data, (loadedImage) => {
+    previewImage = loadedImage;
+    isImagePreviewActive = true;
+    pendingImageAdvance = true;
+  });
+}
+
+function drawImagePreview() {
+  const scaleFactor = min(width / previewImage.width, height / previewImage.height);
+  const drawWidth = previewImage.width * scaleFactor;
+  const drawHeight = previewImage.height * scaleFactor;
+  image(
+    previewImage,
+    (width - drawWidth) / 2,
+    (height - drawHeight) / 2,
+    drawWidth,
+    drawHeight
+  );
 }
 
 // ✅ PNG exportieren & zu Stufe 2 wechseln
