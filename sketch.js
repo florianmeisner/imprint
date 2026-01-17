@@ -14,7 +14,7 @@ let exportButton;
 let imageUploadInput;
 
 let currentFont = "Arial";
-const DEFAULT_TEXT = "...";
+let defaultTextValue = "";
 let hasUserTyped = false;
 
 const COLOR_STOPS = [
@@ -76,11 +76,18 @@ function setup() {
   textAlign(CENTER, CENTER);
   textFont(currentFont);
 
+  defaultTextValue = getDefaultDateText();
+
   // Textinput
-  inputText = createInput(DEFAULT_TEXT);
+  inputText = createInput(defaultTextValue);
   addLabeledControl("Text input", inputText);
+  const storedText = sessionStorage.getItem("stufe1Text");
+  if (storedText !== null) {
+    inputText.value(storedText);
+    hasUserTyped = true;
+  }
   inputText.elt.addEventListener("focus", () => {
-    if (!hasUserTyped && inputText.value() === DEFAULT_TEXT) {
+    if (!hasUserTyped && inputText.value() === defaultTextValue) {
       inputText.value("");
       hasUserTyped = true;
     }
@@ -192,6 +199,7 @@ function draw() {
     if (pendingImageAdvance) {
       pendingImageAdvance = false;
       setTimeout(() => {
+        storeLabelHeight();
         sessionStorage.setItem("stufe1PNG", uploadedImageData);
         window.location.href = "page3.html";
       }, 150);
@@ -282,11 +290,52 @@ function drawImagePreview() {
   );
 }
 
+function storeLabelHeight() {
+  let labelHeight = null;
+  let imageHeight = null;
+
+  if (isImagePreviewActive && previewImage) {
+    labelHeight = Math.max(1, previewImage.height);
+    imageHeight = Math.max(1, previewImage.height);
+  } else if (sizeSlider) {
+    const fontSize = sizeSlider.value();
+    labelHeight = Math.max(1, fontSize * 1.2);
+  }
+
+  const canvasEl = document.querySelector("canvas");
+  if (canvasEl && !imageHeight) {
+    imageHeight = Math.max(1, canvasEl.height);
+  }
+
+  if (labelHeight) {
+    sessionStorage.setItem("labelHeight", String(labelHeight));
+  }
+  if (imageHeight) {
+    sessionStorage.setItem("labelImageHeight", String(imageHeight));
+  }
+}
+
+function storeInputText() {
+  if (!inputText) return;
+  const value = inputText.value();
+  sessionStorage.setItem("stufe1Text", value);
+}
+
+function getDefaultDateText() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 // ✅ PNG exportieren & zu Stufe 2 wechseln
 function exportPNGAndGo() {
   let canvas = document.querySelector("canvas");
   let imageData = canvas.toDataURL("image/png");
 
+  storeInputText();
+  storeLabelHeight();
   sessionStorage.setItem("stufe1PNG", imageData);
   window.location.href = "page3.html";
 }

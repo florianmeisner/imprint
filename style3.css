@@ -12,11 +12,127 @@ body {
   font-family: "ABCDiatypeMono", monospace;
   height: 100vh;
   background: white;
+  overflow: hidden;
 }
+
+html {
+  height: 100%;
+  overflow: hidden;
+}
+
+
+/* ––––––––INFO LOOP–––––––– */
+
+.info-loop span {
+  color: black;
+  text-decoration: none;
+}
+
+.info-loop {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #EEEEEE;
+
+    font-size: 100px;
+    font-weight: 100;
+    text-transform: uppercase;
+    padding-block: 8px;
+    overflow: hidden;
+    user-select: none;
+
+    --gap: 20px;
+    display: flex;
+    gap: var(--gap);
+
+    height: 100px;
+    align-items: center;
+    z-index: 2;
+    position: relative;
+
+}
+
+.info-loop {
+    cursor: pointer;
+}
+
+.info-loop.is-hidden {
+    display: none;
+}
+
+.info-loop-start {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: auto;
+    color: black;
+    z-index: 2;
+    font-size: inherit;
+    line-height: 1;
+    background: transparent;
+}
+/* ––––––––INFO LOOP–––––––– */
+.info-loop-track {
+    display: flex;
+    width: max-content;
+    animation: scroll 35s linear infinite;
+    height: 100%;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.info-loop:hover .info-loop-track {
+    animation-play-state: paused;
+    opacity: 0;
+}
+
+.info-loop:hover .info-loop-start {
+    opacity: 1;
+}
+
+.info-loop ul {
+    list-style: none;
+    flex-shrink: 0;
+    min-width: max-content;
+    display: flex;
+    align-items: center;
+    gap: var(--gap);
+
+    padding-right: var(--gap);
+}
+
+
+@keyframes scroll {
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+
+.info-loop-1 .info-loop-span {
+    font-weight: 100;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 #layout {
   display: flex;
   height: 100vh;
+  position: absolute;
+  inset: 0;
 }
 
 /* Canvas Bereich */
@@ -27,7 +143,8 @@ body {
   justify-content: center;
   align-items: stretch;
   position: relative;
-  height: 100vh;
+  height: 100%;
+  cursor: none;
 }
 
 canvas {
@@ -37,6 +154,42 @@ canvas {
   position: absolute;
   inset: 0;
   z-index: 1;
+}
+
+#print-cursor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 42px;
+  height: var(--cursor-height, 120px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 2;
+}
+
+#print-cursor.is-visible {
+  opacity: 1;
+}
+
+#canvas-container.is-button-hover #print-cursor {
+  opacity: 0;
+}
+
+.cursor-tip {
+  width: 42px;
+  height: 5px;
+  display: block;
+}
+
+.cursor-line {
+  width: 1px;
+  flex: 1;
+  background: black;
 }
 
 /* Icon Buttons */
@@ -54,6 +207,11 @@ canvas {
   box-shadow: none;
   -webkit-appearance: none;
   appearance: none;
+}
+
+.icon-button,
+.preset-button {
+  cursor: pointer;
 }
 
 .icon-button img {

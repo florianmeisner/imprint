@@ -10,10 +10,72 @@
 </head>
 <body>
 
+<div class="info-loop">
+   <div class="info-loop-track">
+     <ul>
+        <li>
+          <span class="info-loop-span">-></span>
+          <span class="info-loop-span">press and hold or douple click to start printing</span>
+          <span class="info-loop-span"><- -></span>
+          <span class="info-loop-span">press and hold or douple click to start printing</span>
+          <span class="info-loop-span"><- -></span>
+          <span class="info-loop-span">press and hold or douple click to start printing</span>
+          <span class="info-loop-span"><- -></span>
+          <span class="info-loop-span">press and hold or douple click to start printing</span>
+          <span class="info-loop-span"><-</span>
+        </li>
+     </ul>
+     <ul aria-hidden="true">
+        <li>
+          <span class="info-loop-span">-></span>
+          <span class="info-loop-span">press and hold or douple click to start printing</span>
+          <span class="info-loop-span"><- -></span>
+          <span class="info-loop-span">press and hold or douple click to start printing</span>
+          <span class="info-loop-span"><- -></span>
+          <span class="info-loop-span">press and hold or douple click to start printing</span>
+          <span class="info-loop-span"><- -></span>
+          <span class="info-loop-span">press and hold or douple click to start printing</span>
+          <span class="info-loop-span"><-</span>
+        </li>
+     </ul>
+   </div>
+   <div class="info-loop-start" aria-hidden="true">->START<-</div>
+
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const loop = document.querySelector(".info-loop");
+    if (!loop) return;
+
+    const start = loop.querySelector(".info-loop-start");
+    const storageKey = "infoLoopSeen";
+
+    if (localStorage.getItem(storageKey) === "true") {
+      loop.classList.add("is-hidden");
+      return;
+    }
+
+    (start || loop).addEventListener("click", () => {
+      loop.classList.add("is-hidden");
+      localStorage.setItem(storageKey, "true");
+    });
+  });
+</script>
+
 <div id="layout">
 
 
   <div id="canvas-container">
+    <div id="print-cursor" aria-hidden="true">
+      <svg class="cursor-tip cursor-tip--top" viewBox="0 0 42 5" aria-hidden="true">
+        <polygon points="21.5,5 23.8868,0 18.1132,0" fill="black" stroke="black" stroke-width="1" vector-effect="non-scaling-stroke"></polygon>
+      </svg>
+      <span class="cursor-line"></span>
+      <svg class="cursor-tip cursor-tip--bottom" viewBox="0 0 42 5" aria-hidden="true">
+        <polygon points="21.5,0 18.1132,5 23.8868,5" fill="black" stroke="black" stroke-width="1" vector-effect="non-scaling-stroke"></polygon>
+      </svg>
+    </div>
     <button id="resetButton" class="icon-button icon-button--top-right" aria-label="Canvas zurücksetzen">
       <img src="assets/TT-Buttons-close-2.svg" alt="">
     </button>
@@ -51,4 +113,7 @@
 
 <script src="script2.js"></script>
 </body>
+
+<script src="./script-info-loop.js"></script>
+
 </html>

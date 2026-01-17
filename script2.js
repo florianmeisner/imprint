@@ -26,6 +26,8 @@ let isMouseDown = false;
 let isHoverPrintEnabled = false;
 let lastMouseX = null;
 let lastMouseY = null;
+let canvasContainer;
+let cursorEl;
 
 
 // PNG aus Stufe 1 laden und bestehende Druckschicht wiederherstellen
@@ -38,9 +40,9 @@ function preload() {
 }
 
 function setup() {
-  const container = document.getElementById("canvas-container");
-  let w = container.clientWidth;
-  let h = container.clientHeight;
+  canvasContainer = document.getElementById("canvas-container");
+  let w = canvasContainer.clientWidth;
+  let h = canvasContainer.clientHeight;
 
   // Zeichenfläche initialisieren
   canvas = createCanvas(w, h);
@@ -59,9 +61,22 @@ function setup() {
     printedLayer.image(savedPrintImg, 0, 0, width, height);
   }
 
+  if (img) {
+    img.loadPixels();
+    prewarmImage();
+  }
+
   setupPresets();
   setupButtons();
   setupAutoSave();
+  setupCursor();
+}
+
+function prewarmImage() {
+  const scratch = createGraphics(1, 1);
+  scratch.pixelDensity(1);
+  scratch.clear();
+  scratch.image(img, 0, 0, 1, 1, 0, 0, 1, 1);
 }
 
 function draw() {
@@ -162,6 +177,8 @@ function setupPresets() {
     // UI-Status markieren
     presetButtons.forEach((btn) => btn.classList.remove("is-active"));
     button.classList.add("is-active");
+
+    updateCursorHeightFromPreset();
   };
 
   presetButtons.forEach((button) => {
@@ -197,6 +214,62 @@ function setupButtons() {
     savePrintedLayer();
     window.location.href = "page2.html";
   };
+}
+
+function setupCursor() {
+  if (!canvasContainer) return;
+  cursorEl = document.getElementById("print-cursor");
+  if (!cursorEl) return;
+  updateCursorHeightFromPreset();
+
+  const updateCursorPos = (event) => {
+    const rect = canvasContainer.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    cursorEl.style.left = `${x}px`;
+    cursorEl.style.top = `${y}px`;
+  };
+
+  canvasContainer.addEventListener("mouseenter", () => {
+    cursorEl.classList.add("is-visible");
+  });
+
+  canvasContainer.addEventListener("mouseleave", () => {
+    cursorEl.classList.remove("is-visible");
+  });
+
+  canvasContainer.addEventListener("mousemove", updateCursorPos);
+
+  const buttons = canvasContainer.querySelectorAll("button");
+  buttons.forEach((button) => {
+    button.addEventListener("mouseenter", () => {
+      canvasContainer.classList.add("is-button-hover");
+    });
+    button.addEventListener("mouseleave", () => {
+      canvasContainer.classList.remove("is-button-hover");
+    });
+  });
+}
+
+function updateCursorHeightFromPreset() {
+  if (!cursorEl) return;
+  const labelHeight = parseFloat(sessionStorage.getItem("labelHeight"));
+  const storedImageHeight = parseFloat(sessionStorage.getItem("labelImageHeight"));
+  const imageHeight = Number.isFinite(storedImageHeight) && storedImageHeight > 0
+    ? storedImageHeight
+    : (img && img.height ? img.height : null);
+
+  const printerHeight = Math.max(1, nozzleCount * nozzleSpacing);
+  let cursorHeight = printerHeight;
+
+  if (Number.isFinite(labelHeight) && labelHeight > 0 && imageHeight) {
+    cursorHeight = printerHeight * (labelHeight / imageHeight);
+  } else if (Number.isFinite(labelHeight) && labelHeight > 0) {
+    cursorHeight = labelHeight;
+  }
+
+  cursorHeight = Math.max(1, cursorHeight);
+  cursorEl.style.setProperty("--cursor-height", `${cursorHeight}px`);
 }
 
 // Druckstatus automatisch sichern (auch bei Navigation/Reload)
