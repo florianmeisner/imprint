@@ -158,7 +158,7 @@ function setup() {
     setExclusiveStyle(toggleOutlineButton);
   });
 
-  toggleHighlightButton = createButton("Marking");
+  toggleHighlightButton = createButton("Lable");
   toggleHighlightButton.parent(styleGroup);
   toggleHighlightButton.mousePressed(() => {
     setExclusiveStyle(toggleHighlightButton);
