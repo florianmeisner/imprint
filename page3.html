@@ -50,16 +50,22 @@
 
     const start = loop.querySelector(".info-loop-start");
     const storageKey = "infoLoopSeen";
+    const canvasContainer = document.getElementById("canvas-container");
+
+    const hideLoop = () => {
+      loop.classList.add("is-hidden");
+      localStorage.setItem(storageKey, "true");
+    };
 
     if (localStorage.getItem(storageKey) === "true") {
       loop.classList.add("is-hidden");
       return;
     }
 
-    (start || loop).addEventListener("click", () => {
-      loop.classList.add("is-hidden");
-      localStorage.setItem(storageKey, "true");
-    });
+    (start || loop).addEventListener("click", hideLoop);
+    if (canvasContainer) {
+      canvasContainer.addEventListener("click", hideLoop);
+    }
   });
 </script>
 
@@ -77,12 +83,12 @@
       </svg>
     </div>
     <button id="resetButton" class="icon-button icon-button--top-right" aria-label="Canvas zurücksetzen">
-      <img src="assets/TT-Buttons-close-2.svg" alt="">
+      <img src="assets/TT-Buttons-close-5.svg" alt="">
     </button>
 
     <div id="bottom-bar" aria-label="Druckleiste">
       <button id="backButton" class="icon-button" aria-label="Zurück zu Stufe 1">
-        <img src="assets/TT-Buttons-plus-2.svg" alt="">
+        <img src="assets/TT-Arrow-3.svg" alt="">
       </button>
 
     <div id="preset-bar" aria-label="Druckvoreinstellungen">
@@ -101,10 +107,13 @@
       <button class="preset-button" data-nozzle-count="30" data-nozzle-spacing="1.5" data-jitter-strength="0.2" aria-label="Wood">
         <img src="assets/TT-Wood.png" alt="Wood">
       </button>
+      <button class="preset-button" data-randomize="true" aria-label="Fire">
+        <img src="assets/TT-Fire.png" alt="Fire">
+      </button>
     </div>
 
       <button id="exportButton" class="icon-button" aria-label="Als PNG speichern">
-        <img src="assets/TT-Buttons-download-2.svg" alt="">
+        <img src="assets/TT-Buttons-download-3.svg" alt="">
       </button>
     </div>
   </div>

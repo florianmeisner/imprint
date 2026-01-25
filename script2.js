@@ -16,6 +16,13 @@ const PRESET_CONFIG = [
   { label: "Fabric",    nozzleCount: 84, nozzleSpacing: 9,   jitterStrength: 0.1 },
   { label: "Stone",     nozzleCount: 114, nozzleSpacing: 9,   jitterStrength: 1 },
   { label: "Wood",      nozzleCount: 150, nozzleSpacing: 10, jitterStrength: 0.2 },
+  {
+    label: "Fire",
+    randomize: true,
+    nozzleCountRange: [10, 240],
+    nozzleSpacingRange: [0.6, 28],
+    jitterStrengthRange: [0.0, 4.0],
+  },
 ];
 
 // --- Canvas/Interaktion ---
@@ -125,6 +132,8 @@ function drawInkjetStreifen(x, y) {
     // Kleine zufällige Abweichung (Blur)
     let jitterX = random(-jitterStrength * 4, jitterStrength * 4);
     let jitterY = random(-jitterStrength * 4, jitterStrength * 4);
+    const targetY = y + yOffset + jitterY;
+    if (targetY < 0 || targetY > height) continue;
 
     let imgY = int(map(i, 0, nozzleCount, 0, img.height - 1));
     let stripHeight = img.height / nozzleCount;
@@ -135,7 +144,7 @@ function drawInkjetStreifen(x, y) {
 
       // ✅ EXAKT AN MAUSPOSITION
       x + jitterX,
-      y + yOffset + jitterY,
+      targetY,
 
       stripWidth,
       stripHeight,
@@ -163,16 +172,43 @@ function setupPresets() {
   presetButtons.forEach((button, index) => {
     const config = PRESET_CONFIG[index];
     if (!config) return;
+    if (config.randomize) {
+      button.dataset.randomize = "true";
+      button.dataset.nozzleCountMin = config.nozzleCountRange[0];
+      button.dataset.nozzleCountMax = config.nozzleCountRange[1];
+      button.dataset.nozzleSpacingMin = config.nozzleSpacingRange[0];
+      button.dataset.nozzleSpacingMax = config.nozzleSpacingRange[1];
+      button.dataset.jitterStrengthMin = config.jitterStrengthRange[0];
+      button.dataset.jitterStrengthMax = config.jitterStrengthRange[1];
+      return;
+    }
     button.dataset.nozzleCount = config.nozzleCount;
     button.dataset.nozzleSpacing = config.nozzleSpacing;
     button.dataset.jitterStrength = config.jitterStrength;
   });
 
   const applyPreset = (button) => {
+    if (button.dataset.randomize === "true") {
+      const countMin = parseFloat(button.dataset.nozzleCountMin);
+      const countMax = parseFloat(button.dataset.nozzleCountMax);
+      const spacingMin = parseFloat(button.dataset.nozzleSpacingMin);
+      const spacingMax = parseFloat(button.dataset.nozzleSpacingMax);
+      const jitterMin = parseFloat(button.dataset.jitterStrengthMin);
+      const jitterMax = parseFloat(button.dataset.jitterStrengthMax);
+
+      nozzleCount = int(random(countMin, countMax));
+      nozzleSpacing = float(random(spacingMin, spacingMax));
+      jitterStrength = float(random(jitterMin, jitterMax));
+
+      button.dataset.nozzleCount = nozzleCount;
+      button.dataset.nozzleSpacing = nozzleSpacing;
+      button.dataset.jitterStrength = jitterStrength;
+    } else {
     // Aktive Druckwerte setzen (fürs Zeichnen)
     nozzleCount = int(button.dataset.nozzleCount);
     nozzleSpacing = float(button.dataset.nozzleSpacing);
     jitterStrength = float(button.dataset.jitterStrength);
+    }
 
     // UI-Status markieren
     presetButtons.forEach((btn) => btn.classList.remove("is-active"));
@@ -269,6 +305,7 @@ function updateCursorHeightFromPreset() {
   }
 
   cursorHeight = Math.max(1, cursorHeight);
+  cursorHeight = Math.min(cursorHeight, height);
   cursorEl.style.setProperty("--cursor-height", `${cursorHeight}px`);
 }
 

@@ -1,3 +1,5 @@
+// sketch.js (komplett) — Image Zeile ist jetzt identisch aufgebaut wie Font-Zeile
+
 // --- UI State ---
 let inputText, squeezeSlider, sizeSlider, weightSlider;
 let outlineMode = false;
@@ -6,6 +8,7 @@ let previewImage = null;
 let uploadedImageData = null;
 let isImagePreviewActive = false;
 let pendingImageAdvance = false;
+let canvas;
 
 // --- Controls ---
 let toggleOutlineButton, toggleHighlightButton, toggleNoneButton;
@@ -16,6 +19,12 @@ let imageUploadInput;
 let currentFont = "Arial";
 let defaultTextValue = "";
 let hasUserTyped = false;
+const MIN_CANVAS_WIDTH_VW = 5;
+const CANVAS_SIDE_PADDING = 80;
+const MAX_CANVAS_VW = 70;
+const CANVAS_HEIGHT_PADDING = 60;
+const MIN_CANVAS_HEIGHT_VH = 10;
+const MAX_CANVAS_HEIGHT_VH = 70;
 
 const COLOR_STOPS = [
   { pos: 0.0, rgb: [0, 0, 0] },
@@ -31,9 +40,7 @@ const COLOR_STOPS = [
 function addLabeledControl(labelText, control, rowClass) {
   const row = createDiv();
   row.addClass("control-row");
-  if (rowClass) {
-    row.addClass(rowClass);
-  }
+  if (rowClass) row.addClass(rowClass);
   row.parent("controls");
 
   const label = createDiv(labelText);
@@ -45,11 +52,8 @@ function addLabeledControl(labelText, control, rowClass) {
 }
 
 function setButtonActive(button, isActive) {
-  if (isActive) {
-    button.addClass("is-active");
-  } else {
-    button.removeClass("is-active");
-  }
+  if (isActive) button.addClass("is-active");
+  else button.removeClass("is-active");
 }
 
 function getColorFromSlider(value) {
@@ -69,8 +73,8 @@ function getColorFromSlider(value) {
 }
 
 function setup() {
-  let canvas = createCanvas(800, 400);
-  canvas.parent("canvas-container");
+  canvas = createCanvas(800, 400);
+  canvas.parent("canvas-wrapper");
   pixelDensity(1);
 
   textAlign(CENTER, CENTER);
@@ -78,29 +82,35 @@ function setup() {
 
   defaultTextValue = getDefaultDateText();
 
-  // Textinput
-  inputText = createInput(defaultTextValue);
-  addLabeledControl("Text input", inputText);
+  // Textinput (multiline)
+  inputText = createElement("textarea", defaultTextValue);
+  inputText.attribute("rows", "3");
+  inputText.addClass("text-input");
+  addLabeledControl("Text input", inputText, "text-row");
+
   const storedText = sessionStorage.getItem("stufe1Text");
   if (storedText !== null) {
     inputText.value(storedText);
     hasUserTyped = true;
   }
+
   inputText.elt.addEventListener("focus", () => {
     if (!hasUserTyped && inputText.value() === defaultTextValue) {
       inputText.value("");
       hasUserTyped = true;
-    }
-  });
-  inputText.input(() => {
-    if (!hasUserTyped) {
-      hasUserTyped = true;
+      updateCanvasWidth();
     }
   });
 
-  // ✅ SCHRIFT-AUSWAHL
+  inputText.input(() => {
+    if (!hasUserTyped) hasUserTyped = true;
+    updateCanvasWidth();
+  });
+
+  // ✅ FONT SELECT (unchanged)
   const fontControl = createDiv();
   fontControl.addClass("select-control");
+
   const fontButton = createButton("Select");
   fontButton.addClass("select-trigger");
   fontButton.parent(fontControl);
@@ -116,19 +126,26 @@ function setup() {
   fontSelect.changed(() => {
     currentFont = fontSelect.value();
     textFont(currentFont);
+    updateCanvasWidth();
   });
   fontSelect.parent(fontControl);
+
   addLabeledControl("Font", fontControl, "font-row");
 
-  // Slider
+  // Sliders
   weightSlider = createSlider(100, 900, 300, 1);
   addLabeledControl("Weight", weightSlider);
-  sizeSlider   = createSlider(16, 200, 64, 1);
+
+  sizeSlider = createSlider(16, 200, 64, 1);
   addLabeledControl("Size", sizeSlider);
+
   squeezeSlider = createSlider(0.1, 2, 1, 0.01);
   addLabeledControl("Squeeze", squeezeSlider);
 
-  // Farbe
+  sizeSlider.input(updateCanvasWidth);
+  squeezeSlider.input(updateCanvasWidth);
+
+  // Color
   colorSlider = createSlider(0, 1000, 0, 1);
   colorSlider.addClass("color-slider");
   addLabeledControl("Color", colorSlider);
@@ -148,38 +165,35 @@ function setup() {
 
   toggleNoneButton = createButton("None");
   toggleNoneButton.parent(styleGroup);
-  toggleNoneButton.mousePressed(() => {
-    setExclusiveStyle(toggleNoneButton);
-  });
+  toggleNoneButton.mousePressed(() => setExclusiveStyle(toggleNoneButton));
 
   toggleOutlineButton = createButton("Outline");
   toggleOutlineButton.parent(styleGroup);
-  toggleOutlineButton.mousePressed(() => {
-    setExclusiveStyle(toggleOutlineButton);
-  });
+  toggleOutlineButton.mousePressed(() => setExclusiveStyle(toggleOutlineButton));
 
   toggleHighlightButton = createButton("Lable");
   toggleHighlightButton.parent(styleGroup);
-  toggleHighlightButton.mousePressed(() => {
-    setExclusiveStyle(toggleHighlightButton);
-  });
+  toggleHighlightButton.mousePressed(() => setExclusiveStyle(toggleHighlightButton));
 
   setExclusiveStyle(toggleNoneButton);
-
   addLabeledControl("Style", styleGroup, "style-row");
 
-  // Image upload
+  // ✅ IMAGE UPLOAD — SAME STRUCTURE AS FONT ROW
   const imageControl = createDiv();
   imageControl.addClass("select-control");
-  const imageButton = createButton("Select");
+
+  const imageButton = createButton("Upload");
   imageButton.addClass("select-trigger");
   imageButton.parent(imageControl);
 
+  // Use the SAME overlay class as font-select so CSS positioning/hover is identical
   imageUploadInput = createFileInput(handleImageUpload);
-  imageUploadInput.addClass("font-select");
+  imageUploadInput.addClass("font-select");   // <- identical overlay behavior
+  imageUploadInput.addClass("upload-input");  // <- just a small reset
   imageUploadInput.attribute("accept", "image/*");
   imageUploadInput.parent(imageControl);
-  addLabeledControl("Image", imageControl, "image-row");
+
+  addLabeledControl("Image", imageControl, "font-row");
 
   // Export
   exportButton = createButton("-> send to printer <-");
@@ -189,6 +203,61 @@ function setup() {
   exportRow.parent("controls");
   exportButton.parent(exportRow);
   exportButton.mousePressed(exportPNGAndGo);
+
+  updateCanvasWidth();
+  syncCanvasWrapper();
+}
+
+function getEffectiveText() {
+  const txt = inputText ? inputText.value() : "";
+  return txt && txt.length ? txt : " ";
+}
+
+function updateCanvasWidth() {
+  if (!inputText || !sizeSlider || !squeezeSlider) return;
+  const txt = getEffectiveText();
+  const lines = txt.split("\n");
+  const fontSize = sizeSlider.value();
+  const squeeze = squeezeSlider.value();
+  const lineHeight = fontSize * 1.2;
+
+  textSize(fontSize);
+  textFont(currentFont);
+  textLeading(lineHeight);
+
+  const baseWidth = Math.max(
+    0,
+    ...lines.map((line) => textWidth(line))
+  );
+  const displayWidth = baseWidth * squeeze;
+  const maxWidth = Math.floor(window.innerWidth * (MAX_CANVAS_VW / 100));
+  const minWidth = Math.floor(window.innerWidth * (MIN_CANVAS_WIDTH_VW / 100));
+  const nextWidth = Math.min(
+    maxWidth,
+    Math.max(minWidth, Math.ceil(displayWidth + CANVAS_SIDE_PADDING))
+  );
+
+  const displayHeight = Math.ceil(lines.length * lineHeight);
+  const maxHeight = Math.floor(window.innerHeight * (MAX_CANVAS_HEIGHT_VH / 100));
+  const minHeight = Math.floor(window.innerHeight * (MIN_CANVAS_HEIGHT_VH / 100));
+  const nextHeight = Math.min(
+    maxHeight,
+    Math.max(minHeight, Math.ceil(displayHeight + CANVAS_HEIGHT_PADDING))
+  );
+
+  resizeCanvas(nextWidth, nextHeight);
+  syncCanvasWrapper();
+}
+
+function windowResized() {
+  updateCanvasWidth();
+}
+
+function syncCanvasWrapper() {
+  const wrapper = document.getElementById("canvas-wrapper");
+  if (!wrapper) return;
+  wrapper.style.width = `${width}px`;
+  wrapper.style.height = `${height}px`;
 }
 
 function draw() {
@@ -207,26 +276,30 @@ function draw() {
     return;
   }
 
-  // Werte aus UI holen
-  let txt = inputText.value();
+  let txt = getEffectiveText();
+  const lines = txt.split("\n");
   let squeeze = squeezeSlider.value();
   let fontSize = sizeSlider.value();
   let mainColor = getColorFromSlider(colorSlider.value());
   let fontWeight = weightSlider.value();
+  const lineHeight = fontSize * 1.2;
 
   textSize(fontSize);
   textFont(currentFont);
+  textLeading(lineHeight);
   drawingContext.font = `${fontWeight} ${fontSize}px ${currentFont}`;
 
-  let baseWidth = textWidth(txt);
+  let baseWidth = Math.max(
+    0,
+    ...lines.map((line) => textWidth(line))
+  );
   let displayWidth = baseWidth * squeeze;
-  let displayHeight = fontSize * 1.2;
+  let displayHeight = lines.length * lineHeight;
 
   push();
   translate(width / 2, height / 2);
   scale(squeeze, 1);
 
-  // === Markierung ===
   if (highlightMode) {
     push();
     scale(1 / squeeze, 1);
@@ -245,25 +318,21 @@ function draw() {
     pop();
   }
 
-  // === Text ===
   if (highlightMode) {
     fill(255);
     noStroke();
     text(txt, 0, 0);
-  }
-  else if (outlineMode) {
+  } else if (outlineMode) {
     noFill();
     stroke(mainColor);
     strokeWeight(2);
     text(txt, 0, 0);
-  }
-  else {
+  } else {
     fill(mainColor);
     noStroke();
     text(txt, 0, 0);
   }
 
-  // === Unterstreichung ===
   pop();
 }
 
@@ -299,7 +368,8 @@ function storeLabelHeight() {
     imageHeight = Math.max(1, previewImage.height);
   } else if (sizeSlider) {
     const fontSize = sizeSlider.value();
-    labelHeight = Math.max(1, fontSize * 1.2);
+    const lineCount = inputText ? inputText.value().split("\n").length : 1;
+    labelHeight = Math.max(1, fontSize * 1.2 * lineCount);
   }
 
   const canvasEl = document.querySelector("canvas");
@@ -307,18 +377,13 @@ function storeLabelHeight() {
     imageHeight = Math.max(1, canvasEl.height);
   }
 
-  if (labelHeight) {
-    sessionStorage.setItem("labelHeight", String(labelHeight));
-  }
-  if (imageHeight) {
-    sessionStorage.setItem("labelImageHeight", String(imageHeight));
-  }
+  if (labelHeight) sessionStorage.setItem("labelHeight", String(labelHeight));
+  if (imageHeight) sessionStorage.setItem("labelImageHeight", String(imageHeight));
 }
 
 function storeInputText() {
   if (!inputText) return;
-  const value = inputText.value();
-  sessionStorage.setItem("stufe1Text", value);
+  sessionStorage.setItem("stufe1Text", inputText.value());
 }
 
 function getDefaultDateText() {
@@ -329,7 +394,6 @@ function getDefaultDateText() {
   return `${year}-${month}-${day}`;
 }
 
-// ✅ PNG exportieren & zu Stufe 2 wechseln
 function exportPNGAndGo() {
   let canvas = document.querySelector("canvas");
   let imageData = canvas.toDataURL("image/png");
