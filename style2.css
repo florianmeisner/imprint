@@ -84,7 +84,7 @@ a {
 
 /* Left column item container */
 #controls > * {
-  height: 56px;
+  height: 6.22vh;
   padding: 0px var(--controls-padding);
   margin: 0 calc(-1 * var(--controls-padding));
   border-bottom: 1px solid black;
@@ -221,7 +221,7 @@ textarea {
 
 .text-input {
   width: 18vw;
-  min-height: 48px;
+  min-height: 5.33vh;
   line-height: 1.2;
 }
 
@@ -385,10 +385,12 @@ button.is-active:hover {
 
 /* Slider Style */
 input[type=range] {
+  --slider-track-h: 0.22vh;
+  --slider-thumb-h: 4.44vh;
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 20px;
+  height: var(--slider-thumb-h);
   cursor: pointer;
 }
 
@@ -400,7 +402,7 @@ input[type=range] {
 
 /* Slider track */
 input[type=range]::-webkit-slider-runnable-track {
-  height: 2px;
+  height: var(--slider-track-h);
   background: black;
 }
 
@@ -422,23 +424,24 @@ input[type=range]::-webkit-slider-runnable-track {
 /* Slider thumb */
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  height: 40px;
+  height: var(--slider-thumb-h);
   width: 8px;
   background: black;
   border-radius: 1px;
-  margin-top: -19px;
+  /* Center thumb on the track line */
+  margin-top: calc((var(--slider-track-h) - var(--slider-thumb-h)) / 2);
   cursor: pointer;
 }
 
 /* Slider track (Firefox) */
 input[type=range]::-moz-range-track {
-  height: 2px;
+  height: var(--slider-track-h);
   background: black;
 }
 
 /* Slider thumb (Firefox) */
 input[type=range]::-moz-range-thumb {
-  height: 40px;
+  height: var(--slider-thumb-h);
   width: 8px;
   background: black;
   border: none;
@@ -448,7 +451,7 @@ input[type=range]::-moz-range-thumb {
 
 /* Color slider track gradient (Firefox) */
 .color-slider::-moz-range-track {
-  height: 2px;
+  height: 0.22vh;
   background: linear-gradient(
     90deg,
     #000000 0%,
@@ -492,7 +495,7 @@ canvas {
 .canvas-corner {
   position: absolute;
   width: 80px;
-  height: 80px;
+  height: 8.89vh;
   pointer-events: none;
   z-index: 2;
 }
