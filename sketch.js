@@ -77,7 +77,7 @@ function setup() {
   canvas.parent("canvas-wrapper");
   pixelDensity(1);
 
-  textAlign(CENTER, CENTER);
+  textAlign(LEFT, CENTER);
   textFont(currentFont);
 
   defaultTextValue = getDefaultDateText();
@@ -300,6 +300,8 @@ function draw() {
   translate(width / 2, height / 2);
   scale(squeeze, 1);
 
+  const textX = -baseWidth / 2;
+
   if (highlightMode) {
     push();
     scale(1 / squeeze, 1);
@@ -321,16 +323,16 @@ function draw() {
   if (highlightMode) {
     fill(255);
     noStroke();
-    text(txt, 0, 0);
+    text(txt, textX, 0);
   } else if (outlineMode) {
     noFill();
     stroke(mainColor);
     strokeWeight(2);
-    text(txt, 0, 0);
+    text(txt, textX, 0);
   } else {
     fill(mainColor);
     noStroke();
-    text(txt, 0, 0);
+    text(txt, textX, 0);
   }
 
   pop();

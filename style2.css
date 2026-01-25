@@ -223,6 +223,7 @@ textarea {
   width: 18vw;
   min-height: 5.33vh;
   line-height: 1.2;
+  text-align: left;
 }
 
 #controls .text-input {
