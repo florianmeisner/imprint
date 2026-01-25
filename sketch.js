@@ -3,6 +3,7 @@
 // --- UI State ---
 let inputText, squeezeSlider, sizeSlider, weightSlider;
 let outlineMode = false;
+const LINE_HEIGHT_MULTIPLIER = 1.014;
 let highlightMode = false;
 let previewImage = null;
 let uploadedImageData = null;
@@ -219,7 +220,7 @@ function updateCanvasWidth() {
   const lines = txt.split("\n");
   const fontSize = sizeSlider.value();
   const squeeze = squeezeSlider.value();
-  const lineHeight = fontSize * 1.2;
+  const lineHeight = fontSize * LINE_HEIGHT_MULTIPLIER;
 
   textSize(fontSize);
   textFont(currentFont);
@@ -282,7 +283,7 @@ function draw() {
   let fontSize = sizeSlider.value();
   let mainColor = getColorFromSlider(colorSlider.value());
   let fontWeight = weightSlider.value();
-  const lineHeight = fontSize * 1.2;
+  const lineHeight = fontSize * LINE_HEIGHT_MULTIPLIER;
 
   textSize(fontSize);
   textFont(currentFont);
@@ -371,7 +372,7 @@ function storeLabelHeight() {
   } else if (sizeSlider) {
     const fontSize = sizeSlider.value();
     const lineCount = inputText ? inputText.value().split("\n").length : 1;
-    labelHeight = Math.max(1, fontSize * 1.2 * lineCount);
+    labelHeight = Math.max(1, fontSize * LINE_HEIGHT_MULTIPLIER * lineCount);
   }
 
   const canvasEl = document.querySelector("canvas");
