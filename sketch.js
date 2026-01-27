@@ -73,6 +73,19 @@ function getColorFromSlider(value) {
   return color(0, 0, 0);
 }
 
+/* ✅ setzt --thumb-h pro Slider auf die echte Row-Höhe */
+function syncSliderThumbHeights() {
+  const sliders = document.querySelectorAll('#controls input[type="range"]');
+  sliders.forEach(slider => {
+    const row = slider.closest('.control-row');
+    if (!row) return;
+
+    const h = row.clientHeight;               // echte Innenhöhe der Row
+    slider.style.setProperty('--thumb-h', `${h}px`);
+    slider.style.setProperty('--range-h', `${h}px`);
+  });
+}
+
 function setup() {
   canvas = createCanvas(800, 400);
   canvas.parent("canvas-wrapper");
@@ -131,7 +144,6 @@ function setup() {
   });
   fontSelect.parent(fontControl);
 
-  // addLabeledControl("Font", fontControl, "font-row");
   addLabeledControl("Font", fontControl, "");
 
   // Sliders
@@ -144,8 +156,15 @@ function setup() {
   squeezeSlider = createSlider(0.1, 2, 1, 0.01);
   addLabeledControl("Squeeze", squeezeSlider);
 
-  sizeSlider.input(updateCanvasWidth);
-  squeezeSlider.input(updateCanvasWidth);
+  sizeSlider.input(() => {
+    updateCanvasWidth();
+    syncSliderThumbHeights();
+  });
+
+  squeezeSlider.input(() => {
+    updateCanvasWidth();
+    syncSliderThumbHeights();
+  });
 
   // Color
   colorSlider = createSlider(0, 1000, 0, 1);
@@ -163,6 +182,8 @@ function setup() {
     setButtonActive(toggleOutlineButton, outlineMode);
     setButtonActive(toggleHighlightButton, highlightMode);
     setButtonActive(toggleNoneButton, activeButton === toggleNoneButton);
+
+    syncSliderThumbHeights();
   }
 
   toggleNoneButton = createButton("None");
@@ -195,7 +216,6 @@ function setup() {
   imageUploadInput.attribute("accept", "image/*");
   imageUploadInput.parent(imageControl);
 
-  // addLabeledControl("Image", imageControl, "font-row");
   addLabeledControl("Image", imageControl, "");
 
   // Export
@@ -209,6 +229,10 @@ function setup() {
 
   updateCanvasWidth();
   syncCanvasWrapper();
+
+  // ✅ wichtig: nachdem alle Sliders im DOM sind
+  syncSliderThumbHeights();
+  setTimeout(syncSliderThumbHeights, 0);
 }
 
 function getEffectiveText() {
@@ -254,6 +278,7 @@ function updateCanvasWidth() {
 
 function windowResized() {
   updateCanvasWidth();
+  syncSliderThumbHeights();
 }
 
 function syncCanvasWrapper() {
