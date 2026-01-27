@@ -131,7 +131,8 @@ function setup() {
   });
   fontSelect.parent(fontControl);
 
-  addLabeledControl("Font", fontControl, "font-row");
+  // addLabeledControl("Font", fontControl, "font-row");
+  addLabeledControl("Font", fontControl, "");
 
   // Sliders
   weightSlider = createSlider(100, 900, 300, 1);
@@ -194,7 +195,8 @@ function setup() {
   imageUploadInput.attribute("accept", "image/*");
   imageUploadInput.parent(imageControl);
 
-  addLabeledControl("Image", imageControl, "font-row");
+  // addLabeledControl("Image", imageControl, "font-row");
+  addLabeledControl("Image", imageControl, "");
 
   // Export
   exportButton = createButton("-> send to printer <-");

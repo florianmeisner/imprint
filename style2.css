@@ -71,7 +71,7 @@ a {
   max-width: 25vw;
   background: #ffffff;
   --controls-padding: 10px;
-  padding: var(--controls-padding);
+  /* padding: var(--controls-padding); */
   border-right: 1px solid black;
   display: flex;
   flex-direction: column;
@@ -85,8 +85,8 @@ a {
 /* Left column item container */
 #controls > * {
   height: 6.22vh;
-  padding: 0px var(--controls-padding);
-  margin: 0 calc(-1 * var(--controls-padding));
+  /* padding: 0px var(--controls-padding); */
+  /* margin: 0 calc(-1 * var(--controls-padding)); */
   border-bottom: 1px solid black;
 }
 
@@ -104,14 +104,23 @@ a {
 /* Header row is double height for long text */
 #controls > .Headline {
   height: 25vh;
-  padding-top: var(--controls-padding);
+  /* padding-top: var(--controls-padding); */
+  padding: 8px;
 }
 
 /* Control row wrapper */
 .control-row {
+  /* display: flex;
+  align-items: center;
+  gap: 8px; */
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+
+}
+
+.control-row > *{
   display: flex;
   align-items: center;
-  gap: 8px;
 }
 
 .image-row {
@@ -129,13 +138,14 @@ a {
 .control-label {
   font-size: 12px;
   letter-spacing: 0.04em;
-  width: 6vw;
-  flex: 0 0 6vw;
+  padding: 8px;
+  /* width: 6vw;
+  flex: 0 0 6vw; */
 }
 
 .control-row > :not(.control-label) {
-  width: 18vw;
-  flex: 0 0 18vw;
+  /* width: 18vw;
+  flex: 0 0 18vw; */
 }
 
 .control-row input[type="text"],
@@ -169,6 +179,9 @@ a {
   max-width: 100%;
   height: 100%;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 0;
   padding: 0;
 }
@@ -231,10 +244,10 @@ textarea {
   flex: 0 0 18vw;
 }
 
-/* Button-specific styling */
+/* Button-specific styling Send to printer */
 button {
   cursor: pointer;
-  background: #EEEEEE;
+  background: #eeeeee;
   color: black;
   text-align: left;
   text-transform: uppercase;
@@ -302,8 +315,8 @@ button.is-active:hover {
 /* Font row fills available height */
 .font-row {
   align-items: stretch;
-  padding-right: 0;
-  gap: 0;
+  /* padding-right: 0;
+  gap: 0; */
 }
 
 .font-row .control-label {
@@ -361,7 +374,7 @@ button.is-active:hover {
 
 /* Style row fills button height */
 .style-row {
-  padding: 0 var(--controls-padding);
+  /* padding: 0 var(--controls-padding); */
   align-items: stretch;
 }
 
@@ -371,13 +384,16 @@ button.is-active:hover {
 }
 
 .style-row .style-buttons {
-  flex: 1 1 auto;
+  /* flex: 1 1 auto;
   min-width: 0;
   width: auto;
-  align-self: stretch;
+  align-self: stretch; */
   margin-top: 0;
   margin-bottom: 0;
-  margin-right: calc(-1 * var(--controls-padding));
+  /* margin-right: calc(-1 * var(--controls-padding)); */
+
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr))
 }
 
 .style-row .style-buttons button {
