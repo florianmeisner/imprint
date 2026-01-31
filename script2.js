@@ -11,11 +11,11 @@ let jitterStrength = 0.4;
 // Reihenfolge entspricht den Buttons in page3.html (von links nach rechts).
 // Hier kannst du Lines (nozzleCount), Nozzles (nozzleSpacing) und Blur (jitterStrength) anpassen.
 const PRESET_CONFIG = [
-  { label: "Can",       nozzleCount: 45, nozzleSpacing: 10,   jitterStrength: 0 },
-  { label: "Cardboard", nozzleCount: 82, nozzleSpacing: 5,   jitterStrength: 0.4 },
-  { label: "Fabric",    nozzleCount: 84, nozzleSpacing: 9,   jitterStrength: 0.1 },
-  { label: "Stone",     nozzleCount: 114, nozzleSpacing: 9,   jitterStrength: 1 },
-  { label: "Wood",      nozzleCount: 150, nozzleSpacing: 10, jitterStrength: 0.2 },
+  { label: "Can",       nozzleCount: 45, nozzleSpacing: 6,   jitterStrength: 0 },
+  { label: "Cardboard", nozzleCount: 64, nozzleSpacing: 5,   jitterStrength: 0.4 },
+  { label: "Fabric",    nozzleCount: 85, nozzleSpacing: 10,   jitterStrength: 0.35 },
+  { label: "Stone",     nozzleCount: 50, nozzleSpacing: 9,   jitterStrength: 1 },
+  { label: "Wood",      nozzleCount: 95, nozzleSpacing: 5, jitterStrength: 0.4 },
   {
     label: "Fire",
     randomize: true,
@@ -242,7 +242,7 @@ function setupButtons() {
     temp.pixelDensity(1);
     temp.clear();
     temp.image(printedLayer, 0, 0);
-    save(temp, "druckergebnis.png");
+    save(temp, "imprintexport.png");
   };
 
   // Zurück zu Stufe 1, aber Druckstatus sichern
