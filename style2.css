@@ -5,6 +5,7 @@ body {
   font-family: "ABCDiatypeMono", monospace;
   height: 100vh;
   background: white;
+  font-size: 16px;
 }
 
 /* Custom mono font */
@@ -26,7 +27,7 @@ body {
 
 /* Left column headline title */
 .Headline h1 {
-  font-size: 2.5rem;
+  font-size: 0.8rem;
   font-family: "ABCDiatypeMono", monospace;
   font-weight: 100;
   margin: 0 0 10px 0;
@@ -46,12 +47,12 @@ body {
 
 /* Left column headline description */
 .Headline h2 {
-  font-size: 0.9375rem;
+  font-size: 0.8rem;
   font-family: "ABCDiatypeMono", monospace;
   font-weight: 100;
   margin: 0 0 10px 0;
   text-transform: uppercase;
-  line-height: 1.1;
+  line-height: 1rem;
 }
 
 /* Global link styling */
@@ -131,8 +132,7 @@ a {
 
 /* Label above each control */
 .control-label {
-  font-size: 0.75rem;
-  letter-spacing: 0.04em;
+  font-size: 0.8rem;
   padding: 15px;
 }
 
@@ -198,7 +198,7 @@ a {
 /* Shared input, select, button styles */
 input, select, button, textarea {
   font-family: "ABCDiatypeMono", monospace;
-  font-size: 0.9375rem;
+  font-size: 0.8rem;
   font-weight: 100;
   padding: 4px 6px;
   border: none;
